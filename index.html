@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHAHZAIB TECH - SECURE DATABASE</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+        :root {
+            --primary: #0f0;
+            --dark: #050505;
+            --dim: #003300;
+            --glow: 0 0 10px rgba(0, 255, 0, 0.7);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--dark);
+            color: var(--primary);
+            font-family: 'Share Tech Mono', monospace;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Matrix Rain Effect Background */
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.15;
+        }
+
+        .interface {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 700px;
+            background: rgba(0, 10, 0, 0.9);
+            border: 1px solid var(--primary);
+            box-shadow: var(--glow);
+            padding: 2rem;
+            border-radius: 5px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+            text-shadow: var(--glow);
+            border-bottom: 2px solid var(--dim);
+            padding-bottom: 10px;
+            letter-spacing: 3px;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #008800;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            background: #000;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 15px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.2rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            box-shadow: var(--glow);
+            border-color: #fff;
+        }
+
+        button {
+            width: 100%;
+            background: var(--dim);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 15px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.2rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: var(--primary);
+            color: #000;
+            box-shadow: var(--glow);
+        }
+
+        #result-window {
+            margin-top: 20px;
+            border: 1px dashed var(--dim);
+            background: rgba(0, 20, 0, 0.5);
+            padding: 10px;
+            min-height: 150px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .log {
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .log.success { color: #fff; text-shadow: 0 0 5px #fff; }
+        .log.error { color: #ff3333; }
+        .log.info { opacity: 0.7; }
+
+        /* Data Card Styling */
+        .data-card {
+            border: 1px solid var(--primary);
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(0, 50, 0, 0.2);
+        }
+
+        .row {
+            display: flex;
+            border-bottom: 1px solid var(--dim);
+            padding: 5px 0;
+        }
+        
+        .row:last-child { border-bottom: none; }
+        
+        .key {
+            width: 100px;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        
+        .value {
+            flex: 1;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: var(--primary); }
+        ::-webkit-scrollbar-track { background: #000; }
+
+        @keyframes blink { 50% { opacity: 0; } }
+        .cursor { animation: blink 1s infinite; }
+    </style>
+</head>
+<body>
+
+    <!-- Canvas for Matrix Effect -->
+    <canvas id="matrix"></canvas>
+
+    <div class="interface">
+        <h1>SHAHZAIB TECH</h1>
+        <div class="status-bar">
+            <span>SYSTEM: ONLINE</span>
+            <span>ENCRYPTION: AES-256</span>
+            <span>USER: ADMIN</span>
+        </div>
+
+        <div class="input-group">
+            <input type="number" id="phoneInput" placeholder="ENTER TARGET NUMBER (03XXXXXXXXX)">
+            <button onclick="startSearch()">[ INITIATE SEARCH ]</button>
+        </div>
+
+        <div id="result-window">
+            <div class="log info">> WAITING FOR INPUT<span class="cursor">_</span></div>
+        </div>
+    </div>
+
+<script>
+    // Matrix Rain Animation
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const katakana = '0101010101';
+    const fontSize = 16;
+    const columns = canvas.width/fontSize;
+    const drops = [];
+
+    for(let x = 0; x < columns; x++) drops[x] = 1;
+
+    function draw() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#0F0';
+        ctx.font = fontSize + 'px monospace';
+
+        for(let i = 0; i < drops.length; i++) {
+            const text = katakana.charAt(Math.floor(Math.random() * katakana.length));
+            ctx.fillText(text, i*fontSize, drops[i]*fontSize);
+            if(drops[i]*fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+            drops[i]++;
+        }
+    }
+    setInterval(draw, 33);
+
+    // Logic for Data Fetching
+    async function startSearch() {
+        const input = document.getElementById('phoneInput');
+        const consoleDiv = document.getElementById('result-window');
+        const number = input.value.trim();
+
+        // Clear console
+        consoleDiv.innerHTML = '';
+
+        if(!number) {
+            log('ERROR: NULL_INPUT_DETECTED', 'error');
+            return;
+        }
+
+        log(`> TARGETING: ${number}...`, 'info');
+        log('> ESTABLISHING SECURE UPLINK...', 'info');
+
+        try {
+            // Using AllOrigins to bypass CORS blockage directly in browser
+            const targetApi = `https://shadowscriptz.xyz/public_apis/simdetailsapi.php?number=${number}`;
+            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetApi)}`;
+
+            const response = await fetch(proxyUrl);
+            const rawData = await response.json();
+            
+            // The proxy returns the actual API data inside "contents" string
+            if (!rawData.contents) {
+                throw new Error("PROXY_GATEWAY_FAILURE");
+            }
+
+            const data = JSON.parse(rawData.contents);
+
+            // Handle cases where data might be empty or error
+            if (!data || (Array.isArray(data) && data.length === 0)) {
+                log('RESULT: NO RECORDS FOUND IN DATABASE', 'error');
+                return;
+            }
+
+            if (data.error) {
+                log(`SERVER ERROR: ${data.error}`, 'error');
+                return;
+            }
+
+            // Normalize data (Handle Array vs Object)
+            const records = Array.isArray(data) ? data : [data];
+
+            log(`> ACCESS GRANTED. ${records.length} FILE(S) FOUND.`, 'success');
+
+            records.forEach((record, i) => {
+                // Safe access to properties (handles case-sensitivity)
+                const name = record.name || record.Name || "UNKNOWN";
+                const cnic = record.cnic || record.CNIC || "UNKNOWN";
+                const phone = record.number || record.Number || number;
+                const address = record.address || record.Address || "UNKNOWN";
+
+                const html = `
+                <div class="data-card">
+                    <div class="row"><span class="key">ID:</span> <span class="value">#${i+1}</span></div>
+                    <div class="row"><span class="key">NAME:</span> <span class="value">${name}</span></div>
+                    <div class="row"><span class="key">PHONE:</span> <span class="value">${phone}</span></div>
+                    <div class="row"><span class="key">CNIC:</span> <span class="value">${cnic}</span></div>
+                    <div class="row"><span class="key">ADDR:</span> <span class="value">${address}</span></div>
+                </div>`;
+                
+                consoleDiv.insertAdjacentHTML('beforeend', html);
+            });
+
+        } catch (err) {
+            console.error(err);
+            log('CRITICAL FAILURE: CONNECTION REFUSED', 'error');
+            log('Check internet connection or API status.', 'error');
+        }
+    }
+
+    function log(msg, type) {
+        const div = document.getElementById('result-window');
+        div.innerHTML += `<div class="log ${type}">${msg}</div>`;
+        div.scrollTop = div.scrollHeight; // Auto scroll
+    }
+
+    // Allow Enter Key
+    document.getElementById('phoneInput').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            startSearch();
+        }
+    });
+</script>
+
+</body>
+  </html>
