@@ -3,371 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Owner Details | Shahzaib Tech</title>
-    <meta name="description" content="Professional SIM Owner Details Finder by Shahzaib Tech. Fast, secure, and accurate.">
+    <title>Shahzaib Tech - SIM Database</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@300;500;700&display=swap');
-
-        :root {
-            --primary-color: #00f2ff;
-            --secondary-color: #7000ff;
-            --bg-dark: #0a0a0f;
-            --card-bg: rgba(20, 20, 30, 0.7);
-        }
-
-        body {
-            background-color: var(--bg-dark);
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(112, 0, 255, 0.1) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(0, 242, 255, 0.1) 0%, transparent 20%);
-            color: #ffffff;
-            font-family: 'Rajdhani', sans-serif;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* Glassmorphism */
-        .glass-panel {
-            background: var(--card-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
-
-        .tech-title {
-            font-family: 'Orbitron', sans-serif;
-            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
-        }
-
-        /* Input Styling */
-        .custom-input {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(0, 242, 255, 0.3);
-            color: white;
-            transition: all 0.3s ease;
-        }
-
-        .custom-input:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
-            outline: none;
-        }
-
-        /* Button Styling */
-        .cyber-btn {
-            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
-            border: none;
-            color: white;
-            position: relative;
-            z-index: 1;
-            overflow: hidden;
-            transition: transform 0.2s;
-        }
-
-        .cyber-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            z-index: -1;
-            transition: opacity 0.3s;
-            opacity: 0;
-        }
-
-        .cyber-btn:hover::before {
-            opacity: 1;
-        }
-
-        .cyber-btn:active {
-            transform: scale(0.98);
-        }
-
-        /* Result Card Animation */
-        .result-card {
-            animation: slideUp 0.5s ease-out forwards;
-            border-left: 3px solid var(--primary-color);
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .loader {
-            border: 3px solid rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            border-top: 3px solid var(--primary-color);
-            width: 24px;
-            height: 24px;
-            -webkit-animation: spin 1s linear infinite; /* Safari */
-            animation: spin 1s linear infinite;
-            display: none;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Grid Background Animation */
-        .grid-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-size: 50px 50px;
-            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                              linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            z-index: -1;
-            pointer-events: none;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+        body { background-color: #0d0d0d; color: #00ff41; font-family: 'VT323', monospace; overflow-x: hidden; }
+        .hacker-border { border: 2px solid #00ff41; box-shadow: 0 0 10px #00ff41; }
+        .hacker-input { background: #000; border: 1px solid #00ff41; color: #00ff41; outline: none; }
+        .hacker-input::placeholder { color: #005f17; }
+        .hacker-btn { background: #000; border: 1px solid #00ff41; color: #00ff41; transition: .3s; letter-spacing: 2px; }
+        .hacker-btn:hover { background: #00ff41; color: #000; box-shadow: 0 0 20px #00ff41; cursor: pointer; }
+        .scan-line { width: 100%; height: 2px; background: rgba(0,255,65,0.1); position: absolute; animation: scan 5s linear infinite; }
+        @keyframes scan { 0%{top:0;}100%{top:100%;} }
+        .matrix-bg { position: fixed; width: 100%; height: 100%; opacity: 0.05; z-index: -1; background-size: 50px 50px; }
+        .typing-effect::after { content:'|'; animation: blink 1s infinite; }
+        @keyframes blink { 0%,100%{opacity:1}50%{opacity:0}}
+        .result-card { background: rgba(0,20,0,0.8); border:1px solid #00ff41; margin-top:1rem; position:relative; }
+        .label { color:#008F11; font-weight:bold; }
     </style>
 </head>
-<body class="flex flex-col items-center justify-center p-4 sm:p-8">
+<body class="min-h-screen flex flex-col items-center justify-center p-4 relative">
 
-    <!-- Background Elements -->
-    <div class="grid-bg"></div>
+    <div class="matrix-bg"></div>
+    <div class="scan-line"></div>
 
-    <!-- Main Container -->
-    <div class="w-full max-w-md md:max-w-2xl glass-panel rounded-2xl p-6 sm:p-10 relative overflow-hidden">
-        
-        <!-- Header -->
-        <div class="text-center mb-8">
-            <div class="inline-block p-3 rounded-full bg-opacity-10 bg-blue-500 mb-4 border border-blue-500/30">
-                <i class="fas fa-database text-3xl text-[var(--primary-color)]"></i>
-            </div>
-            <h1 class="text-3xl sm:text-4xl font-bold tech-title mb-2 tracking-wider">SHAHZAIB TECH</h1>
-            <p class="text-gray-400 text-lg tracking-widest uppercase text-xs">Premium Owner Details Database</p>
-        </div>
+    <div class="w-full max-w-2xl hacker-border p-6 relative bg-black bg-opacity-90">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-6xl font-bold mb-2 tracking-wider">SHAHZAIB TECH</h1>
+            <p class="text-xl typing-effect">SYSTEM_ACCESS: GRANTED_</p>
+            <p class="text-xs text-green-700 mt-2">SECURE_CONNECTION_ESTABLISHED v2.0</p>
+        </header>
 
-        <!-- Search Section -->
-        <div class="space-y-6">
-            <div class="relative">
-                <label for="phoneNumber" class="block text-sm font-medium text-gray-300 mb-2 ml-1">Enter Mobile Number</label>
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <i class="fas fa-mobile-alt text-gray-500"></i>
-                    </div>
-                    <input type="number" id="phoneNumber" 
-                        class="custom-input w-full pl-11 pr-4 py-4 rounded-xl text-lg placeholder-gray-600" 
-                        placeholder="e.g., 03001234567"
-                        onkeypress="handleEnter(event)">
-                </div>
-                <p class="text-xs text-gray-500 mt-2 ml-1"><i class="fas fa-info-circle mr-1"></i> Enter number without dashes (03XXXXXXXXX)</p>
-            </div>
-
-            <button onclick="fetchDetails()" class="cyber-btn w-full py-4 rounded-xl font-bold text-lg shadow-lg shadow-blue-500/20 flex items-center justify-center gap-3 group">
-                <span id="btnText">SEARCH DATABASE</span>
-                <i class="fas fa-search group-hover:translate-x-1 transition-transform"></i>
-                <div id="loader" class="loader"></div>
-            </button>
-        </div>
-
-        <!-- Error Message -->
-        <div id="errorMessage" class="hidden mt-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-200 text-sm text-center">
-            <i class="fas fa-exclamation-triangle mr-2"></i> <span id="errorText">Error fetching data.</span>
-        </div>
-
-        <!-- Results Section -->
-        <div id="resultsContainer" class="hidden mt-8 space-y-4">
-            <div class="flex items-center justify-between border-b border-gray-700 pb-2 mb-4">
-                <h3 class="text-xl font-bold text-white font-['Orbitron']">SEARCH RESULTS</h3>
-                <span class="text-xs px-2 py-1 rounded bg-green-500/20 text-green-400 border border-green-500/30">ACTIVE</span>
-            </div>
-            
-            <div id="cardsWrapper" class="space-y-4">
-                <!-- Cards will be injected here via JS -->
+        <div class="mb-8">
+            <div class="flex flex-col md:flex-row gap-4">
+                <input type="number" id="numberInput" placeholder="ENTER TARGET NUMBER 03XXXXXXXXX"
+                    class="hacker-input w-full p-4 text-xl">
+                <button onclick="fetchData()" class="hacker-btn px-8 py-4 font-bold text-xl">
+                    [ INITIATE ]
+                </button>
             </div>
         </div>
 
-        <!-- Footer -->
-        <div class="mt-10 text-center border-t border-gray-800 pt-6">
-            <p class="text-gray-500 text-xs">
-                &copy; <span id="year"></span> Shahzaib Tech. All rights reserved.<br>
-                <span class="opacity-50">Powered by ShadowScriptz API</span>
-            </p>
+        <div id="statusArea" class="hidden text-center py-4">
+            <p class="animate-pulse text-xl">>> ESTABLISHING UPLINK...</p>
         </div>
+
+        <div id="resultsArea" class="hidden space-y-4">
+            <h2 class="text-2xl">>> TARGET_ACQUIRED</h2>
+            <div id="dataContainer"></div>
+        </div>
+
+        <div id="errorArea" class="hidden mt-4 p-4 border border-red-500 bg-red-900 bg-opacity-20 text-red-500 text-center">
+            <p class="text-xl">!! CONNECTION_FAILURE !!</p>
+            <p id="errorMessage" class="text-sm mt-2"></p>
+        </div>
+
+        <footer class="mt-12 text-center text-green-900 text-sm">
+            ENCRYPTED BY SHAHZAIB TECH © 2025
+        </footer>
     </div>
 
-    <script>
-        // Set current year
-        document.getElementById('year').textContent = new Date().getFullYear();
+<script>
+async function fetchData() {
+    const number = document.getElementById('numberInput').value.trim();
+    if(!number) return showError("INPUT_ERROR: NUMBER_REQUIRED");
 
-        function handleEnter(e) {
-            if (e.key === 'Enter') {
-                fetchDetails();
-            }
+    toggleLoading(true);
+    
+    try {
+        const response = await fetch("api.php?number=" + number);
+        if(!response.ok) throw new Error("HTTP ERROR " + response.status);
+
+        const data = await response.json();
+        toggleLoading(false);
+
+        if(data && Object.keys(data).length > 0){
+            displayResults(data);
+        } else {
+            showError("TARGET_NOT_FOUND");
         }
+    } catch (err) {
+        toggleLoading(false);
+        showError("NETWORK_ERROR / CORS BLOCKED");
+    }
+}
 
-        async function fetchDetails() {
-            const numberInput = document.getElementById('phoneNumber');
-            const number = numberInput.value.trim();
-            const btnText = document.getElementById('btnText');
-            const loader = document.getElementById('loader');
-            const errorDiv = document.getElementById('errorMessage');
-            const errorText = document.getElementById('errorText');
-            const resultsContainer = document.getElementById('resultsContainer');
-            const cardsWrapper = document.getElementById('cardsWrapper');
+function toggleLoading(show){
+    document.getElementById('statusArea').classList.toggle('hidden', !show);
+}
 
-            // Reset UI
-            errorDiv.classList.add('hidden');
-            resultsContainer.classList.add('hidden');
-            cardsWrapper.innerHTML = '';
+function displayResults(data){
+    const resultsArea = document.getElementById('resultsArea');
+    const dataContainer = document.getElementById('dataContainer');
+    dataContainer.innerHTML = "";
 
-            // Validation
-            if (!number) {
-                showError("Please enter a mobile number.");
-                return;
-            }
-            if (number.length < 10 || number.length > 13) { // Loose validation to allow different formats
-                showError("Please enter a valid mobile number format.");
-                return;
-            }
-
-            // UI Loading State
-            btnText.textContent = "SEARCHING...";
-            loader.style.display = "block";
-            numberInput.disabled = true;
-
-            try {
-                // Using a proxy is often needed for client-side requests to avoid CORS, 
-                // but since you provided a direct PHP API, we will try direct fetch first.
-                // Ideally, this API should allow CORS headers.
-                const apiUrl = `https://shadowscriptz.xyz/public_apis/simdetailsapi.php?number=${number}`;
-                
-                const response = await fetch(apiUrl);
-                
-                if (!response.ok) {
-                    throw new Error(`Server Error: ${response.status}`);
-                }
-
-                const data = await response.json();
-
-                // Check API specific response structure
-                // Assuming standard structure based on similar APIs: 
-                // { status: true, data: [...] } or just [...] or { name: ..., cnic: ... }
-                
-                // Let's handle a few common response patterns genericly
-                let records = [];
-                
-                if (Array.isArray(data)) {
-                    records = data;
-                } else if (data.data && Array.isArray(data.data)) {
-                    records = data.data;
-                } else if (data.status === false || data.error) {
-                    throw new Error(data.message || "No records found for this number.");
-                } else {
-                    // Single object response
-                    records = [data];
-                }
-
-                if (records.length === 0) {
-                    throw new Error("No details found in the database.");
-                }
-
-                // Render Cards
-                records.forEach((record, index) => {
-                    const card = document.createElement('div');
-                    card.className = 'result-card glass-panel p-5 rounded-xl relative overflow-hidden';
-                    card.style.animationDelay = `${index * 100}ms`;
-
-                    // Handle potential null values safely
-                    const name = record.name || record.Name || "N/A";
-                    const cnic = record.cnic || record.CNIC || "N/A";
-                    const phone = record.number || record.Mobile || number;
-                    const address = record.address || record.Address || "N/A";
-                    const date = record.date || record.activation_date || "N/A";
-
-                    card.innerHTML = `
-                        <div class="absolute top-0 right-0 p-4 opacity-10">
-                            <i class="fas fa-fingerprint text-6xl text-white"></i>
-                        </div>
-                        <div class="relative z-10">
-                            <div class="grid grid-cols-1 gap-3">
-                                <div>
-                                    <span class="text-xs text-gray-400 uppercase tracking-wider">Full Name</span>
-                                    <p class="text-lg font-bold text-[var(--primary-color)]">${name}</p>
-                                </div>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <span class="text-xs text-gray-400 uppercase tracking-wider">CNIC Number</span>
-                                        <div class="flex items-center gap-2">
-                                            <p class="font-mono text-white">${cnic}</p>
-                                            <button onclick="copyToClipboard('${cnic}')" class="text-gray-500 hover:text-white transition-colors" title="Copy CNIC">
-                                                <i class="far fa-copy text-xs"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <span class="text-xs text-gray-400 uppercase tracking-wider">Mobile</span>
-                                        <p class="font-mono text-white">${phone}</p>
-                                    </div>
-                                </div>
-                                <div>
-                                    <span class="text-xs text-gray-400 uppercase tracking-wider">Address</span>
-                                    <p class="text-gray-200 text-sm leading-relaxed">${address}</p>
-                                </div>
-                                ${date !== 'N/A' ? `
-                                <div class="pt-2 mt-2 border-t border-gray-700/50">
-                                    <span class="text-xs text-gray-500">Date: ${date}</span>
-                                </div>` : ''}
-                            </div>
-                        </div>
-                    `;
-                    cardsWrapper.appendChild(card);
-                });
-
-                resultsContainer.classList.remove('hidden');
-
-            } catch (error) {
-                console.error(error);
-                showError(error.message || "An error occurred while fetching data. Please try again.");
-            } finally {
-                // Reset Loading State
-                btnText.textContent = "SEARCH DATABASE";
-                loader.style.display = "none";
-                numberInput.disabled = false;
-            }
+    for(const [key,val] of Object.entries(data)){
+        if(key !== "status" && key !== "message"){
+            dataContainer.innerHTML += `
+                <div class="result-card p-4">
+                    <span class="label">${key.toUpperCase()}</span>: <span>${val}</span>
+                </div>`;
         }
+    }
 
-        function showError(msg) {
-            const errorDiv = document.getElementById('errorMessage');
-            const errorText = document.getElementById('errorText');
-            errorText.textContent = msg;
-            errorDiv.classList.remove('hidden');
-        }
+    resultsArea.classList.remove("hidden");
+}
 
-        function copyToClipboard(text) {
-            // Using the newer Clipboard API with fallback
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(text).then(() => {
-                    // Visual feedback could be added here
-                    alert("CNIC copied: " + text);
-                });
-            } else {
-                // Fallback for older browsers or non-secure context
-                let textArea = document.createElement("textarea");
-                textArea.value = text;
-                textArea.style.position = "fixed";
-                textArea.style.left = "-9999px";
-                document.body.appendChild(textArea);
-                textArea.focus();
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                alert("CNIC copied: " + text);
-            }
-        }
-    </script>
+function showError(msg){
+    document.getElementById("errorMessage").innerText = msg;
+    document.getElementById("errorArea").classList.remove("hidden");
+}
+
+document.getElementById("numberInput").addEventListener("keypress", e=>{
+    if(e.key === "Enter") fetchData();
+});
+</script>
+
 </body>
 </html>
