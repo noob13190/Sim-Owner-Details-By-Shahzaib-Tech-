@@ -226,77 +226,77 @@
 
     // Logic for Data Fetching
     async function startSearch() {
-        const input = document.getElementById('phoneInput');
-        const consoleDiv = document.getElementById('result-window');
-        const number = input.value.trim();
+    const input = document.getElementById('phoneInput');
+    const consoleDiv = document.getElementById('result-window');
+    const number = input.value.trim();
 
-        // Clear console
-        consoleDiv.innerHTML = '';
+    // Clear console
+    consoleDiv.innerHTML = '';
 
-        if(!number) {
-            log('ERROR: NULL_INPUT_DETECTED', 'error');
+    if(!number) {
+        log('ERROR: NULL_INPUT_DETECTED', 'error');
+        return;
+    }
+
+    log(`> TARGETING: ${number}...`, 'info');
+    log('> ESTABLISHING SECURE UPLINK...', 'info');
+
+    try {
+        // Using AllOrigins to bypass CORS blockage directly in browser
+        const targetApi = `https://shadowscriptz.xyz/public_apis/simdetailsapi.php?number=${number}`;
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetApi)}`;
+
+        const response = await fetch(proxyUrl);
+        const rawData = await response.json();
+
+        // The proxy returns the actual API data inside "contents" string
+        if (!rawData.contents) {
+            throw new Error("PROXY_GATEWAY_FAILURE");
+        }
+
+        const data = JSON.parse(rawData.contents);
+
+        // Handle cases where data might be empty or error
+        if (!data || (Array.isArray(data) && data.length === 0)) {
+            log('RESULT: NO RECORDS FOUND IN DATABASE', 'error');
             return;
         }
 
-        log(`> TARGETING: ${number}...`, 'info');
-        log('> ESTABLISHING SECURE UPLINK...', 'info');
-
-        try {
-            // Using AllOrigins to bypass CORS blockage directly in browser
-            const targetApi = `https://shadowscriptz.xyz/public_apis/simdetailsapi.php?number=${number}`;
-            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetApi)}`;
-
-            const response = await fetch(proxyUrl);
-            const rawData = await response.json();
-            
-            // The proxy returns the actual API data inside "contents" string
-            if (!rawData.contents) {
-                throw new Error("PROXY_GATEWAY_FAILURE");
-            }
-
-            const data = JSON.parse(rawData.contents);
-
-            // Handle cases where data might be empty or error
-            if (!data || (Array.isArray(data) && data.length === 0)) {
-                log('RESULT: NO RECORDS FOUND IN DATABASE', 'error');
-                return;
-            }
-
-            if (data.error) {
-                log(`SERVER ERROR: ${data.error}`, 'error');
-                return;
-            }
-
-            // Normalize data (Handle Array vs Object)
-            const records = Array.isArray(data) ? data : [data];
-
-            log(`> ACCESS GRANTED. ${records.length} FILE(S) FOUND.`, 'success');
-
-            records.forEach((record, i) => {
-                // Safe access to properties (handles case-sensitivity)
-                const name = record.name || record.Name || "UNKNOWN";
-                const cnic = record.cnic || record.CNIC || "UNKNOWN";
-                const phone = record.number || record.Number || number;
-                const address = record.address || record.Address || "UNKNOWN";
-
-                const html = `
-                <div class="data-card">
-                    <div class="row"><span class="key">ID:</span> <span class="value">#${i+1}</span></div>
-                    <div class="row"><span class="key">NAME:</span> <span class="value">${name}</span></div>
-                    <div class="row"><span class="key">PHONE:</span> <span class="value">${phone}</span></div>
-                    <div class="row"><span class="key">CNIC:</span> <span class="value">${cnic}</span></div>
-                    <div class="row"><span class="key">ADDR:</span> <span class="value">${address}</span></div>
-                </div>`;
-                
-                consoleDiv.insertAdjacentHTML('beforeend', html);
-            });
-
-        } catch (err) {
-            console.error(err);
-            log('CRITICAL FAILURE: CONNECTION REFUSED', 'error');
-            log('Check internet connection or API status.', 'error');
+        if (data.error) {
+            log(`SERVER ERROR: ${data.error}`, 'error');
+            return;
         }
+
+        // Normalize data (Handle Array vs Object)
+        const records = Array.isArray(data) ? data : [data];
+
+        log(`> ACCESS GRANTED. ${records.length} FILE(S) FOUND.`, 'success');
+
+        records.forEach((record, i) => {
+            // Safe access to properties (handles case-sensitivity)
+            const name = record.name || record.Name || "UNKNOWN";
+            const cnic = record.cnic || record.CNIC || "UNKNOWN";
+            const phone = record.number || record.Number || number;
+            const address = record.address || record.Address || "UNKNOWN";
+
+            const html = `
+            <div class="data-card">
+                <div class="row"><span class="key">ID:</span> <span class="value">#${i+1}</span></div>
+                <div class="row"><span class="key">NAME:</span> <span class="value">${name}</span></div>
+                <div class="row"><span class="key">PHONE:</span> <span class="value">${phone}</span></div>
+                <div class="row"><span class="key">CNIC:</span> <span class="value">${cnic}</span></div>
+                <div class="row"><span class="key">ADDR:</span> <span class="value">${address}</span></div>
+            </div>`;
+
+            consoleDiv.insertAdjacentHTML('beforeend', html);
+        });
+
+    } catch (err) {
+        console.error(err);
+        log('CRITICAL FAILURE: CONNECTION REFUSED', 'error');
+        log('Check internet connection or API status.', 'error');
     }
+}
 
     function log(msg, type) {
         const div = document.getElementById('result-window');
