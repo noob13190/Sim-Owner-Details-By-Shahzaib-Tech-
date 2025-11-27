@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHAHZAIB TECH - DEBUG MODE</title>
+    <style>
+        body { background-color: #000; color: #0f0; font-family: monospace; padding: 20px; }
+        input, button { padding: 10px; font-size: 1.2rem; background: #111; color: #0f0; border: 1px solid #0f0; }
+        #debug-log { margin-top: 20px; white-space: pre-wrap; border: 1px dashed #0f0; padding: 10px; }
+        .raw-data { color: #ffff00; }
+    </style>
+</head>
+<body>
+
+    <h1>SHAHZAIB TECH - DATABASE DEBUGGER</h1>
+    <input type="number" id="phoneInput" placeholder="Enter Number">
+    <button onclick="startSearch()">CHECK DATA</button>
+
+    <div id="debug-log">Waiting for input...</div>
+
+<script>
+    async function startSearch() {
+        const input = document.getElementById('phoneInput');
+        const logDiv = document.getElementById('debug-log');
+        const number = input.value.trim();
+
+        logDiv.innerHTML = 'Connecting to API...';
+
+        try {
+            // Using AllOrigins Proxy
+            const targetApi = `https://shadowscriptz.xyz/public_apis/simdetailsapi.php?number=${number}`;
+            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetApi)}`;
+
+            const response = await fetch(proxyUrl);
+            const rawData = await response.json();
+            
+            // This is the raw text from the API
+            const apiContent = rawData.contents;
+
+            logDiv.innerHTML = `<strong>STATUS:</strong> CONNECTED\n\n`;
+            logDiv.innerHTML += `<span class="raw-data"><strong>RAW DATA FROM SERVER:</strong>\n${apiContent}</span>\n\n`;
+
+            try {
+                const parsedData = JSON.parse(apiContent);
+                logDiv.innerHTML += `<strong>PARSED JSON:</strong>\n${JSON.stringify(parsedData, null, 2)}`;
+            } catch (e) {
+                logDiv.innerHTML += `<strong>ERROR PARSING JSON:</strong> ${e.message}`;
+            }
+
+        } catch (err) {
+            logDiv.innerHTML = `<strong>CONNECTION ERROR:</strong> ${err.message}`;
+        }
+    }
+</script>
+
+</body>
+</html>
