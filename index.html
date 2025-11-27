@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shahzaib Tech - Sim Info Tool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+        
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --text-primary: #00ff00;
+            --text-secondary: #00cc00;
+            --accent: #00ff00;
+            --accent-glow: rgba(0, 255, 0, 0.3);
+            --border-color: #003300;
+            --button-bg: #002200;
+            --button-hover: #004400;
+            --error-color: #ff3333;
+            --success-color: #00ff00;
+        }
+        
+        .light-mode {
+            --bg-primary: #f0f0f0;
+            --bg-secondary: #ffffff;
+            --text-primary: #006600;
+            --text-secondary: #008800;
+            --accent: #008800;
+            --accent-glow: rgba(0, 136, 0, 0.2);
+            --border-color: #cccccc;
+            --button-bg: #e0e0e0;
+            --button-hover: #d0d0d0;
+            --error-color: #cc0000;
+            --success-color: #008800;
+        }
+        
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Matrix Background Effect */
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.1;
+        }
+        
+        .matrix-char {
+            position: absolute;
+            color: var(--accent);
+            font-size: 14px;
+            animation: matrixFall linear infinite;
+        }
+        
+        @keyframes matrixFall {
+            0% {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            box-shadow: 0 0 20px var(--accent-glow);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--accent-glow), transparent);
+            animation: scanning 3s infinite;
+        }
+        
+        @keyframes scanning {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+            text-shadow: 0 0 10px var(--accent-glow);
+            letter-spacing: 2px;
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+            color: var(--text-secondary);
+        }
+        
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--button-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            background: var(--button-hover);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+        
+        .tool-container {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 0 20px var(--accent-glow);
+            border: 1px solid var(--border-color);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tool-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            text-shadow: 0 0 5px var(--accent-glow);
+        }
+        
+        .search-options {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .search-option {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .option-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--button-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--accent-glow), transparent);
+            transition: left 0.5s;
+        }
+        
+        .option-btn:hover::before {
+            left: 100%;
+        }
+        
+        .option-btn.active {
+            background: var(--button-hover);
+            border-color: var(--accent);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+        
+        .option-btn:hover {
+            background: var(--button-hover);
+            transform: translateY(-2px);
+        }
+        
+        .input-group {
+            display: flex;
+            margin-bottom: 25px;
+        }
+        
+        input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px 0 0 8px;
+            font-size: 1.1rem;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            outline: none;
+        }
+        
+        input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+        
+        button {
+            padding: 15px 25px;
+            background: var(--button-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--accent-glow), transparent);
+            transition: left 0.5s;
+        }
+        
+        button:hover::before {
+            left: 100%;
+        }
+        
+        button:hover {
+            background: var(--button-hover);
+            border-color: var(--accent);
+            box-shadow: 0 0 15px var(--accent-glow);
+            transform: translateY(-2px);
+        }
+        
+        .result-container {
+            margin-top: 20px;
+            background: var(--bg-primary);
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        
+        .result-row {
+            display: flex;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .result-label {
+            font-weight: bold;
+            width: 120px;
+            color: var(--text-secondary);
+        }
+        
+        .result-value {
+            flex: 1;
+        }
+        
+        .no-data {
+            text-align: center;
+            font-size: 1.3rem;
+            color: var(--error-color);
+            padding: 30px;
+        }
+        
+        .more-tools {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .more-tools-btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: var(--button-bg);
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px var(--accent-glow);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .more-tools-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--accent-glow), transparent);
+            transition: left 0.5s;
+        }
+        
+        .more-tools-btn:hover::before {
+            left: 100%;
+        }
+        
+        .more-tools-btn:hover {
+            background: var(--button-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            color: var(--text-secondary);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 30px;
+            font-size: 1.2rem;
+        }
+        
+        .loading i {
+            margin-right: 10px;
+            animation: spin 1s linear infinite;
+            color: var(--accent);
+        }
+        
+        .credit {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            opacity: 0.8;
+        }
+        
+        .numbers-count {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            color: var(--success-color);
+            font-weight: bold;
+        }
+        
+        .number-item {
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--accent);
+        }
+        
+        .number-header {
+            font-weight: bold;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+        
+        .created-by {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: var(--accent);
+            font-weight: bold;
+        }
+        
+        .validation-error {
+            text-align: center;
+            padding: 20px;
+            color: var(--error-color);
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            margin-top: 10px;
+            border: 1px solid var(--error-color);
+        }
+        
+        .example-number {
+            color: var(--accent);
+            font-weight: bold;
+            margin-top: 10px;
+            font-size: 1.1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 600px) {
+            .search-options {
+                flex-direction: column;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            input, button {
+                width: 100%;
+                border-radius: 8px;
+                margin-bottom: 10px;
+            }
+            
+            .result-row {
+                flex-direction: column;
+            }
+            
+            .result-label {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="matrix-bg" id="matrixBg"></div>
+    
+    <div class="container">
+        <header>
+            <h1>SHAHZAIB TECH SIM-INFO TOOL</h1>
+            <p class="tagline">SECURE INFORMATION RETRIEVAL SYSTEM</p>
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i> DARK MODE
+            </button>
+        </header>
+        
+        <div class="tool-container">
+            <h2 class="tool-title">SIM INFORMATION TOOL</h2>
+            
+            <div class="search-options">
+                <div class="search-option">
+                    <button class="option-btn active" id="phoneOption">
+                        <i class="fas fa-phone"></i> SEARCH BY PHONE POWERED BY SHAHZAIB TECH 
+                    </button>
+                </div>
+                <div class="search-option">
+                    <button class="option-btn" id="cnicOption">
+                        <i class="fas fa-id-card"></i> SEARCH BY CNIC POWERED BY SHAHZAIB TECH 
+                    </button>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <input type="text" id="searchInput" placeholder="ENTER 11-DIGIT PHONE NUMBER" maxlength="11">
+                <button id="searchBtn">INITIATE SCAN</button>
+            </div>
+            
+            <div class="result-container" id="resultContainer">
+                <div class="no-data">AWAITING INPUT... READY TO SCAN</div>
+            </div>
+            
+            <div class="created-by">
+                This System Is Created By Shahzaib Tech 
+            </div>
+        </div>
+        
+        <footer>
+            <p>Shahzaib Tech &copy; 2025 © | ALL RIGHTS RESERVED</p>
+            <p>SECURE INFORMATION RETRIEVAL SYSTEM</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Matrix background effect
+            function createMatrixEffect() {
+                const matrixBg = document.getElementById('matrixBg');
+                const chars = '01010101010101010101010101010101ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&';
+                
+                for (let i = 0; i < 50; i++) {
+                    const char = document.createElement('div');
+                    char.className = 'matrix-char';
+                    char.textContent = chars[Math.floor(Math.random() * chars.length)];
+                    char.style.left = Math.random() * 100 + 'vw';
+                    char.style.animationDuration = (Math.random() * 10 + 5) + 's';
+                    char.style.animationDelay = Math.random() * 5 + 's';
+                    matrixBg.appendChild(char);
+                }
+            }
+            
+            createMatrixEffect();
+            
+            // Theme toggle
+            const themeToggle = document.getElementById('themeToggle');
+            themeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('light-mode');
+                if (document.body.classList.contains('light-mode')) {
+                    themeToggle.innerHTML = '<i class="fas fa-sun"></i> LIGHT MODE';
+                } else {
+                    themeToggle.innerHTML = '<i class="fas fa-moon"></i> DARK MODE';
+                }
+            });
+            
+            const searchBtn = document.getElementById('searchBtn');
+            const searchInput = document.getElementById('searchInput');
+            const resultContainer = document.getElementById('resultContainer');
+            const phoneOption = document.getElementById('phoneOption');
+            const cnicOption = document.getElementById('cnicOption');
+            
+            let searchType = 'phone'; // Default search type
+            
+            // Event listeners for search type selection
+            phoneOption.addEventListener('click', function() {
+                searchType = 'phone';
+                phoneOption.classList.add('active');
+                cnicOption.classList.remove('active');
+                searchInput.placeholder = 'ENTER 11-DIGIT PHONE NUMBER';
+                searchInput.maxLength = 11;
+                searchInput.value = '';
+                resultContainer.innerHTML = '<div class="no-data">ENTER 11-DIGIT PHONE TO SCAN</div>';
+            });
+            
+            cnicOption.addEventListener('click', function() {
+                searchType = 'cnic';
+                cnicOption.classList.add('active');
+                phoneOption.classList.remove('active');
+                searchInput.placeholder = 'ENTER 13-DIGIT CNIC NUMBER';
+                searchInput.maxLength = 13;
+                searchInput.value = '';
+                resultContainer.innerHTML = '<div class="no-data">ENTER 13-DIGIT CNIC TO SCAN</div>';
+            });
+            
+            searchBtn.addEventListener('click', searchInfo);
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchInfo();
+                }
+            });
+            
+            function searchInfo() {
+                const searchValue = searchInput.value.trim();
+                
+                if (!searchValue) {
+                    showError(`PLEASE ENTER A ${searchType === 'phone' ? 'PHONE NUMBER' : 'CNIC NUMBER'}`);
+                    return;
+                }
+                
+                // Phone number validation
+                if (searchType === 'phone') {
+                    if (!/^\d+$/.test(searchValue)) {
+                        showValidationError('INVALID PHONE NUMBER', 'Phone number should contain only digits', '03123456789');
+                        return;
+                    }
+                    if (searchValue.length !== 11) {
+                        showValidationError('INVALID PHONE NUMBER LENGTH', 'Phone number must be exactly 11 digits', '03123456789');
+                        return;
+                    }
+                }
+                
+                // CNIC validation
+                if (searchType === 'cnic') {
+                    if (!/^\d+$/.test(searchValue)) {
+                        showValidationError('INVALID CNIC NUMBER', 'CNIC should contain only digits', '0000000000000');
+                        return;
+                    }
+                    if (searchValue.length !== 13) {
+                        showValidationError('INVALID CNIC LENGTH', 'CNIC must be exactly 13 digits', '0000000000000');
+                        return;
+                    }
+                }
+                
+                // Show loading state
+                resultContainer.innerHTML = `
+                    <div class="loading">
+                        <i class="fas fa-spinner"></i> SCANNING DATABASE... PLEASE WAIT
+                    </div>
+                `;
+                
+                // Use the same API for both phone and CNIC search
+                searchByNumber(searchValue, searchType);
+            }
+            
+            function searchByNumber(searchValue, type) {
+                // Same API for both phone and CNIC
+                const apiUrl = `https://fam-official.serv00.net/api/database.php?number=${searchValue}`;
+                
+                fetch(apiUrl)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('NETWORK RESPONSE ERROR');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('API Response:', data);
+                        handleApiResponse(data, type, searchValue);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                        // Try with proxy if direct fetch fails
+                        tryProxyFetch(searchValue, type);
+                    });
+            }
+            
+            function tryProxyFetch(searchValue, type) {
+                const proxyUrl = 'https://api.allorigins.win/raw?url=';
+                const apiUrl = `https://fam-official.serv00.net/api/database.php?number=${searchValue}`;
+                
+                const url = proxyUrl + encodeURIComponent(apiUrl);
+                
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('PROXY RESPONSE ERROR');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Proxy API Response:', data);
+                        handleApiResponse(data, type, searchValue);
+                    })
+                    .catch(error => {
+                        console.error('Proxy fetch failed:', error);
+                        showError('DATABASE CONNECTION FAILED. TRY AGAIN.');
+                    });
+            }
+            
+            function handleApiResponse(data, type, searchValue) {
+                // Check if API returned success and has data
+                if (data && data.success && data.data && data.data.length > 0) {
+                    if (type === 'cnic') {
+                        // For CNIC search, show all numbers associated with this CNIC
+                        displayMultipleResults(data.data, searchValue);
+                    } else {
+                        // For phone search, show single result
+                        displaySingleResult(data.data[0]);
+                    }
+                } else {
+                    showNoData();
+                }
+            }
+            
+            function displaySingleResult(userData) {
+                // Extract data from the nested response structure
+                const name = userData.name || "DATA NOT AVAILABLE";
+                const number = userData.number || "DATA NOT AVAILABLE";
+                const cnic = userData.cnic || "DATA NOT AVAILABLE";
+                const address = userData.address || "DATA NOT AVAILABLE";
+                
+                resultContainer.innerHTML = `
+                    <div class="result-row">
+                        <div class="result-label">NAME:</div>
+                        <div class="result-value">${name}</div>
+                    </div>
+                    <div class="result-row">
+                        <div class="result-label">NUMBER:</div>
+                        <div class="result-value">${number}</div>
+                    </div>
+                    <div class="result-row">
+                        <div class="result-label">CNIC:</div>
+                        <div class="result-value">${cnic}</div>
+                    </div>
+                    <div class="result-row">
+                        <div class="result-label">ADDRESS:</div>
+                        <div class="result-value">${address}</div>
+                    </div>
+                    <div class="credit">POWERED BY SHAHZAIB TECH</div>
+                `;
+            }
+            
+            function displayMultipleResults(userDataArray, cnicNumber) {
+                // Show all numbers associated with this CNIC
+                const numbersCount = userDataArray.length;
+                
+                let resultsHTML = `
+                    <div class="numbers-count">
+                        <i class="fas fa-mobile-alt"></i> TOTAL ${numbersCount} NUMBER(S) FOUND FOR CNIC: ${cnicNumber}
+                    </div>
+                `;
+                
+                userDataArray.forEach((userData, index) => {
+                    const name = userData.name || "DATA NOT AVAILABLE";
+                    const number = userData.number || "DATA NOT AVAILABLE";
+                    const cnic = userData.cnic || "DATA NOT AVAILABLE";
+                    const address = userData.address || "DATA NOT AVAILABLE";
+                    
+                    resultsHTML += `
+                        <div class="number-item">
+                            <div class="number-header">NUMBER ${index + 1}: ${number}</div>
+                            <div class="result-row">
+                                <div class="result-label">NAME:</div>
+                                <div class="result-value">${name}</div>
+                            </div>
+                            <div class="result-row">
+                                <div class="result-label">CNIC:</div>
+                                <div class="result-value">${cnic}</div>
+                            </div>
+                            <div class="result-row">
+                                <div class="result-label">ADDRESS:</div>
+                                <div class="result-value">${address}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                resultsHTML += `<div class="credit">CREATOR: SHAHZAIB TECH</div>`;
+                
+                resultContainer.innerHTML = resultsHTML;
+            }
+            
+            function showValidationError(title, message, example) {
+                resultContainer.innerHTML = `
+                    <div class="validation-error">
+                        <i class="fas fa-exclamation-triangle"></i><br>
+                        <strong>${title}</strong><br>
+                        ${message}<br>
+                        <div class="example-number">EXAMPLE: ${example}</div>
+                    </div>
+                `;
+            }
+            
+            function showNoData() {
+                resultContainer.innerHTML = `
+                    <div class="no-data">
+                        <i class="fas fa-exclamation-circle"></i><br>
+                        DATA NOT FOUND IN DATABASE
+                    </div>
+                `;
+            }
+            
+            function showError(message) {
+                resultContainer.innerHTML = `
+                    <div class="no-data">
+                        <i class="fas fa-exclamation-triangle"></i><br>
+                        ${message}
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>
